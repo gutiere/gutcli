@@ -2,15 +2,17 @@ from pathlib import Path
 
 GUT_DIRECTORY = ".gut"
 ALIAS_FILE = "aliases"
+ALIAS_KEY_TEMPLATE = "gut.%s"
 
 class AliasManager:
     @staticmethod
-    def delete_by_name(alias):
+    def delete_by_name(alias_name):
+        alias_key = ALIAS_KEY_TEMPLATE % alias_name
         lines = []
         alias_file = "%s/%s/%s" % (str(Path.home()), GUT_DIRECTORY, ALIAS_FILE)
         with open(alias_file, 'r') as file:
             for line in file.readlines():
-                if not line.split('=')[0].split(' ')[1] == alias:
+                if not line.split('=')[0].split(' ')[1] == alias_key:
                     lines.append(line)
         file.close()
 
@@ -29,7 +31,9 @@ class AliasManager:
 
     @staticmethod
     def craft_alias(name, path):
-        return 'alias gut.%s="cd %s"' % (name, path)
+        template = ALIAS_KEY_TEMPLATE
+        key = ALIAS_KEY_TEMPLATE % name
+        return 'alias %s="cd %s"\n' % (key, path)
 
     @staticmethod
     def get_alias_keys():

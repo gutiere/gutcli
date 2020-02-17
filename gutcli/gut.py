@@ -33,7 +33,6 @@ def main():
     parser.add_argument("-r", "--repo",  nargs = '*', help = "Opens the github repository associated with this repository, or file if specified.")
     parser.add_argument("-a", "--aliases", nargs = '*', help = "Show all aliases.")
 
-
     args = parser.parse_args()
     # print("args: " + str(args))
     if args.configure != None:
