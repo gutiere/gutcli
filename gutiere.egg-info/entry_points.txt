@@ -1,0 +1,3 @@
+[console_scripts]
+gut = gutcli.gut:main
+

@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="gutiere",
-    version="0.0.3",
+    name="gutcli",
+    version="0.0.4",
     author="Edgardo Gutierrez Jr",
     author_email="edgardogutierrezjr@gmail.com",
     description="Quick project navigator",
