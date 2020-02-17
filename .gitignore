@@ -1,0 +1,4 @@
+build/
+dist/
+gutcli.*
+*/__pycache__/*

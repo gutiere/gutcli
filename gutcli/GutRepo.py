@@ -2,7 +2,7 @@ import re
 import os
 import subprocess
 from pathlib import Path
-from AliasManager import AliasManager
+from gutcli.AliasManager import AliasManager
 
 GUT_DIRECTORY = ".gut"
 REPOSITORY_FILE = "repos"

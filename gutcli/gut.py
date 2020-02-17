@@ -2,8 +2,8 @@ import argparse
 import subprocess
 import os.path
 from pathlib import Path
-from GutRepo import GutRepo
-from AliasManager import AliasManager
+from gutcli.GutRepo import GutRepo
+from gutcli.AliasManager import AliasManager
 
 def repo():
     GutRepo().open_remote_url()

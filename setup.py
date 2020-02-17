@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="gutcli", # Replace with your own username
-    version="0.0.1",
+    name="gutiere",
+    version="0.0.3",
     author="Edgardo Gutierrez Jr",
     author_email="edgardogutierrezjr@gmail.com",
     description="Quick project navigator",
@@ -20,7 +20,7 @@ setuptools.setup(
     },
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: GNU License",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
