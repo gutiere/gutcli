@@ -11,7 +11,7 @@ setuptools.setup(
     description="Quick project navigator",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",
+    url="https://github.com/gutiere/gutcli",
     packages=setuptools.find_packages(),
     entry_points ={
         'console_scripts': [
