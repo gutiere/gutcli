@@ -2,3 +2,4 @@ build/
 dist/
 gutcli.*
 */__pycache__/*
+.idea/
