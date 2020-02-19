@@ -32,7 +32,7 @@ class AliasManager:
     @staticmethod
     def get_alias_keys():
         aliases = []
-        with open(get_alias_file_path, 'r') as file:
+        with open(get_alias_file_path(), 'r') as file:
             for line in file.readlines():
                 aliases.append(line.split('=')[0].split(' ')[1])
         file.close()
