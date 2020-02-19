@@ -43,7 +43,9 @@ class AliasManager:
         alias_file_path = Path(get_alias_file_path())
         if not alias_file_path.is_file():
             alias_file_path.touch()
-            alias_file_path.write_text('alias guts="source ~/.gut/aliases"\n')
+            with open(alias_file_path, "a+") as file:
+                file.write('alias guts="source ~/.gut/aliases"\n')
+            file.close()
 
 
 def get_alias_file_path():
