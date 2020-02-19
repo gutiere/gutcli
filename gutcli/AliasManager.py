@@ -4,7 +4,9 @@ GUT_DIRECTORY = ".gut"
 ALIAS_FILE = "aliases"
 ALIAS_KEY_TEMPLATE = "gut.%s"
 
+
 class AliasManager:
+
     @staticmethod
     def delete_by_name(alias_name):
         alias_key = ALIAS_KEY_TEMPLATE % alias_name
@@ -44,3 +46,10 @@ class AliasManager:
                 aliases.append(line.split('=')[0].split(' ')[1])
         file.close()
         return aliases
+
+    @staticmethod
+    def ensure_file_exists():
+        alias_file_path = Path("%s/%s/%s" % (str(Path.home()), GUT_DIRECTORY, ALIAS_FILE))
+        if not alias_file_path.is_file():
+            alias_file_path.touch()
+            alias_file_path.write_text('alias guts="source ~/.gut/aliases"\n')
