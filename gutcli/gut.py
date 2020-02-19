@@ -1,8 +1,8 @@
 import argparse
 import subprocess
 from pathlib import Path
-from RepoManager import RepoManager
-from AliasManager import AliasManager
+from gutcli.RepoManager import RepoManager
+from gutcli.AliasManager import AliasManager
 
 GUT_DIRECTORY = ".gut"
 

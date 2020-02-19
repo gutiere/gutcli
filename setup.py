@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="gutcli",
-    version="0.0.7",
+    version="0.0.11",
     author="Edgardo Gutierrez Jr",
     author_email="edgardogutierrezjr@gmail.com",
     description="Quick project navigator",
@@ -13,7 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/gutiere/gutcli",
     packages=setuptools.find_packages(),
-    entry_points ={
+    entry_points={
         'console_scripts': [
             'gut = gutcli.gut:main'
         ]
