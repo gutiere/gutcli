@@ -1,8 +1,8 @@
 import argparse
 import subprocess
 from pathlib import Path
-from RepoManager import RepoManager
-from AliasManager import AliasManager
+from gutcli.RepoManager import RepoManager
+from gutcli.AliasManager import AliasManager
 
 GUT_DIRECTORY = ".gut"
 
@@ -17,7 +17,7 @@ def run(args):
 
 # Configure the current repo as a gut repo.
 def config():
-    RepoManager.config_dir(str(Path.cwd()), False)
+    RepoManager.config_dir(Path.cwd(), False)
 
 
 def auto_configure():
@@ -27,7 +27,7 @@ def auto_configure():
         current_directory = queue.pop(0)
         # Short circuit directory navigation if this is a git repo
         if Path(str(current_directory) + "/.git").exists():
-            RepoManager.config_dir(str(current_directory), True)
+            RepoManager.config_dir(current_directory, True)
         else:
             for item in current_directory.glob('./*'):
                 if item.is_dir() and not item.name.startswith('.'):
@@ -60,11 +60,11 @@ def main():
     parser.add_argument("-r", "--repo", nargs='*', help="Opens the github repository associated with this repository, "
                                                        "or file if specified.")
     parser.add_argument("--url", nargs='*', help="Print URL only, without opening in the browser.")
-    parser.add_argument("--auto", nargs='*')
+    parser.add_argument("--auto-configure", nargs='*')
 
     args = parser.parse_args()
 
-    if args.auto is not None:
+    if args.auto_configure is not None:
         auto_configure()
     elif args.configure is not None:
         config()

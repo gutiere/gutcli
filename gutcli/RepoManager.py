@@ -2,7 +2,7 @@ import subprocess
 from pathlib import Path
 import re
 
-from AliasManager import AliasManager
+from gutcli.AliasManager import AliasManager
 
 GH_HTTP_PATTERN = 'https://github.com/(.*)/(.*)'
 GH_GIT_PATTERN = 'git@github.com:(.*)/(.*)'
@@ -13,26 +13,30 @@ BRACKET_PATTERN = "\[.*?\]"
 class RepoManager:
 
     @staticmethod
-    def config_dir(path, auto):
+    def config_dir(directory, auto):
+        path = str(directory)
         user = None
         repo = None
-        config_path = Path("./.git/config")
-        if config_path.is_file():
-            user = get_remote_origin_user_repo(config_path.read_text())[0]
-            repo = get_remote_origin_user_repo(config_path.read_text())[1]
+        config_path = Path(path + "/.git/config")
+        if config_path.exists() and config_path.is_file():
+            user_and_repo = get_remote_origin_user_repo(config_path.read_text())
+            if user_and_repo is not None:
+                user = user_and_repo[0]
+                repo = user_and_repo[1]
 
         # TODO: This is DESTRUCTIVE. Get the repo properties, then once it is confirmed that we are done, replace.
         repo_properties = RepoManager.extract_repo_properties(path)
         original_alias = repo_properties["alias"] if "alias" in repo_properties.keys() else None
 
-        alias = None
         if auto:
             print("Auto configuring git repo: %s" % path)
+            print("Repo Alias [%s]: " % directory.name)
+            alias = directory.name
         else:
-            print("Path [%s]: auto" % path)
             alias = str(input("Repo Alias [%s]: " % original_alias))
-            print("GitHub User [%s]: auto" % user)
-            print("GitHub Repo [%s]: auto" % repo)
+        print("Path [%s]: auto" % path)
+        print("GitHub User [%s]: auto" % user)
+        print("GitHub Repo [%s]: auto" % repo)
         if alias:
             if not alias == original_alias:
                 if original_alias is not None:
@@ -42,7 +46,7 @@ class RepoManager:
                 AliasManager.add_alias(alias_entry)
         else:
             alias = original_alias
-        repo_entry = ["[%s]\n" % path, "alias = %s\n" % alias, "user = %s\n" % user, "repo = %s\n" % repo]
+        repo_entry = ["[%s]\n" % path, "alias = %s\n" % alias, "origin_user = %s\n" % user, "origin_repo = %s\n" % repo]
         append_repo_lines(repo_entry)
 
     @staticmethod
