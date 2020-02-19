@@ -21,17 +21,31 @@ def config():
 
 
 def auto_configure():
-    # TODO: Short circuit at a reasonable height
+    level_cap = 5
     queue = [Path.cwd()]
+    level = 0
+    level_capacity = 1
+    current_level_size = 0
+    next_level_capacity = 0
     while queue:
         current_directory = queue.pop(0)
         # Short circuit directory navigation if this is a git repo
         if Path(str(current_directory) + "/.git").exists():
             RepoManager.config_dir(current_directory, True)
         else:
-            for item in current_directory.glob('./*'):
-                if item.is_dir() and not item.name.startswith('.'):
-                    queue.append(item)
+            if level < level_cap:
+                for item in current_directory.glob('./*'):
+                    if item.is_dir() and not item.name.startswith('.'):
+                        queue.append(item)
+                        next_level_capacity += 1
+
+        current_level_size += 1
+        if current_level_size >= level_capacity:
+            level += 1
+            level_capacity = next_level_capacity
+            next_level_capacity = 0
+            current_level_size = 0
+
 
 
 def aliases():
