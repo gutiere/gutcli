@@ -4,8 +4,6 @@ import re
 
 from AliasManager import AliasManager
 
-GUT_DIRECTORY = ".gut"
-REPO_FILE = "repos"
 GH_HTTP_PATTERN = 'https://github.com/(.*)/(.*)'
 GH_GIT_PATTERN = 'git@github.com:(.*)/(.*)'
 GH_HTTP_TEMPLATE = "https://github.com/%s"
@@ -24,14 +22,17 @@ class RepoManager:
             user = get_remote_origin_user_repo(config_path.read_text())[0]
             repo = get_remote_origin_user_repo(config_path.read_text())[1]
 
+        # TODO: This is DESTRUCTIVE. Get the repo properties, then once it is confirmed that we are done, replace.
         repo_properties = RepoManager.extract_repo_properties(path)
         original_alias = repo_properties["alias"] if "alias" in repo_properties.keys() else None
 
         alias = str(input("Repo Alias [%s]: " % original_alias))
         if alias:
             if not alias == original_alias:
-                AliasManager.delete_by_name(original_alias)
+                if original_alias is not None:
+                    AliasManager.delete_by_name(original_alias)
                 alias_entry = AliasManager.craft_alias(alias, path)
+                # TODO: Prevent alias collision
                 AliasManager.add_alias(alias_entry)
         else:
             alias = original_alias
@@ -71,21 +72,33 @@ class RepoManager:
 
     @staticmethod
     def ensure_file_exists():
-        repo_file_path = Path("%s/%s/%s" % (str(Path.home()), GUT_DIRECTORY, REPO_FILE))
+        repo_file_path = Path("%s/.gut/repos" % str(Path.home()))
         if not repo_file_path.is_file():
             repo_file_path.touch()
 
     @staticmethod
-    def open_repo():
+    def open_repo(args, url_only):
         path = run(["pwd"]).strip()
+
+        if len(args) > 0:
+            if args[0] in get_ls_list():
+                path = "%s/%s" % (path, args[0])
+            else:
+                print("The file/dir '%s' does not exist in this directory." % args[0])
+                return
+
         repo_path = find_parent_repo_path(path)
         if repo_path is not None:
             repo_properties = read_properties(repo_path)
             url = construct_base_url(path, repo_properties)
             if url:
-                print("Opening '%s'..." % url)
-                if subprocess.run(["open", url], capture_output=True).returncode == 1:
-                    print("Failed to open '%s'" % url)
+
+                if url_only:
+                    print("GitHub URL: '%s'" % url)
+                else:
+                    print("Opening '%s'..." % url)
+                    if subprocess.run(["open", url], capture_output=True).returncode == 1:
+                        print("Failed to open '%s'" % url)
             else:
                 print("No git origin found.")
                 print("Please add a remote repository: `git remote add origin https://github.com/user/repo.git`")
@@ -140,7 +153,7 @@ def run(args):
 
 
 def get_repo_file_path():
-    return "%s/%s/%s" % (str(Path.home()), GUT_DIRECTORY, REPO_FILE)
+    return "%s/.gut/repos" % str(Path.home())
 
 
 def get_current_branch():
@@ -189,3 +202,6 @@ def write_repo_lines(lines):
 def read_repo_lines():
     return open(get_repo_file_path(), 'r').readlines()
 
+
+def get_ls_list():
+    return run("ls -1".split(' ')).split('\n')

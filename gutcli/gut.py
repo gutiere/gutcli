@@ -7,9 +7,8 @@ from AliasManager import AliasManager
 GUT_DIRECTORY = ".gut"
 
 
-def repo():
-    # TODO: fix to also open other directories or paths.
-    RepoManager.open_repo()
+def repo(args, url_only):
+    RepoManager.open_repo(args, url_only)
 
 
 def run(args):
@@ -46,20 +45,14 @@ def main():
     parser.add_argument("-c", "--configure", nargs='*', help="Instantiates this the current directory as a gut repo.")
     parser.add_argument("-r", "--repo", nargs='*', help="Opens the github repository associated with this repository, "
                                                         "or file if specified.")
+    parser.add_argument("--url", nargs='*', help="Print URL only, without opening in the browser.")
     args = parser.parse_args()
-    print("args: " + str(args))
     if args.configure is not None:
         config()
     elif args.repo is not None:
-        repo()
+        repo(args.repo, args.url is not None)
     elif args.aliases is not None:
         aliases()
-
-    # TODO: Create a delete gut repo
-    # TODO: Show all aliases
-    # TODO: Prevent alias collision
-    # TODO: open directory within github repo
-    # TODO: open file within github repo
 
 
 if __name__ == "__main__":
