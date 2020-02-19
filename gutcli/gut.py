@@ -1,36 +1,15 @@
 import argparse
 import subprocess
 from pathlib import Path
-from gutcli.AliasManager import AliasManager
-from gutcli.RepoManager import RepoManager
+from RepoManager import RepoManager
+from AliasManager import AliasManager
 
 GUT_DIRECTORY = ".gut"
 
 
-def construct_url(repo_properties):
-    keys = ["user", "repo"]
-    for key in keys:
-        if key is None or key not in repo_properties.keys():
-            return None
-    user = repo_properties[keys[0]]
-    repo = repo_properties[keys[1]]
-    if user is None or repo is None:
-        return None
-    return "https://github.com/%s/%s" % (user, repo)
-
-
 def repo():
     # TODO: fix to also open other directories or paths.
-    path = run(["pwd"]).strip()
-    repo_properties = RepoManager.read_properties(path)
-    url = construct_url(repo_properties)
-    if url:
-        print("Opening '%s'..." % url)
-        if subprocess.run(["open", url], capture_output=True).returncode == 1:
-            print("Failed to open '%s'" % url)
-    else:
-        print("No git origin found.")
-        print("Please add a remote repository: `git remote add origin https://github.com/user/repo.git`")
+    RepoManager.open_repo()
 
 
 def run(args):

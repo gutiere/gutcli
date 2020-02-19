@@ -52,4 +52,4 @@ class AliasManager:
         alias_file_path = Path("%s/%s/%s" % (str(Path.home()), GUT_DIRECTORY, ALIAS_FILE))
         if not alias_file_path.is_file():
             alias_file_path.touch()
-            alias_file_path.write_text('alias guts="source ~/.gut/aliases"')
+            alias_file_path.write_text('alias guts="source ~/.gut/aliases"\n')

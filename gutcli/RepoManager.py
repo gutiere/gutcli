@@ -2,21 +2,14 @@ import subprocess
 from pathlib import Path
 import re
 
-from gutcli.AliasManager import AliasManager
+from AliasManager import AliasManager
 
 GUT_DIRECTORY = ".gut"
 REPO_FILE = "repos"
 GH_HTTP_PATTERN = 'https://github.com/(.*)/(.*)'
 GH_GIT_PATTERN = 'git@github.com:(.*)/(.*)'
+GH_HTTP_TEMPLATE = "https://github.com/%s"
 BRACKET_PATTERN = "\[.*?\]"
-
-
-def get_remote_origin_user_repo(config_text):
-    for pattern in [GH_HTTP_PATTERN, GH_GIT_PATTERN]:
-        search_result = re.search(pattern, config_text)
-        if search_result is not None:
-            return search_result.groups()
-    return None
 
 
 class RepoManager:
@@ -98,11 +91,14 @@ class RepoManager:
 
     @staticmethod
     def write_repo_lines(lines):
-        repo_file = "%s/%s/%s" % (str(Path.home()), GUT_DIRECTORY, REPO_FILE)
-        with open(repo_file, 'w') as file:
+        with open(get_repo_file_path(), 'w') as file:
             for line in lines:
                 file.write(line)
             file.close()
+
+    @staticmethod
+    def read_repo_lines():
+        return open(get_repo_file_path(), 'r').readlines()
 
     @staticmethod
     def append_repo_lines(new_lines):
@@ -122,6 +118,68 @@ class RepoManager:
         if not repo_file_path.is_file():
             repo_file_path.touch()
 
+    @staticmethod
+    def open_repo():
+        path = run(["pwd"]).strip()
+        repo_path = find_parent_repo_path(path)
+        if repo_path is not None:
+            repo_properties = RepoManager.read_properties(repo_path)
+            url = construct_base_url(path, repo_properties)
+            if url:
+                print("Opening '%s'..." % url)
+                if subprocess.run(["open", url], capture_output=True).returncode == 1:
+                    print("Failed to open '%s'" % url)
+            else:
+                print("No git origin found.")
+                print("Please add a remote repository: `git remote add origin https://github.com/user/repo.git`")
+        else:
+            print("No parent gut repo found.")
+
+
+def find_parent_repo_path(path):
+    for line in RepoManager.read_repo_lines():
+        stripped_line = line.strip()
+        if re.match(BRACKET_PATTERN, stripped_line) is not None:
+            repo_path = stripped_line.strip("[]")
+            if repo_path in path:
+                return repo_path
+    return None
+
+
+
+
+
+def construct_base_url(path, repo_properties):
+    keys = ["user", "repo"]
+    for key in keys:
+        if key is None or key not in repo_properties.keys():
+            return None
+    user = repo_properties[keys[0]]
+    repo = repo_properties[keys[1]]
+    if user is None or repo is None:
+        return None
+
+    path_parts = path.split(repo_properties["path"])
+    path_suffix = path_parts[1].strip('/')
+
+    url = GH_HTTP_TEMPLATE % user
+    suffix_path_elements = [repo.replace(".git", "")]
+
+    if path_suffix:
+        path_type = "tree" if Path(path).is_dir() else "blob"
+        branch = get_current_branch()
+        suffix_path_elements.extend([path_type, branch, path_suffix])
+
+    return "%s/%s" % (url, "/".join(suffix_path_elements))
+
+
+def get_remote_origin_user_repo(config_text):
+    for pattern in [GH_HTTP_PATTERN, GH_GIT_PATTERN]:
+        search_result = re.search(pattern, config_text)
+        if search_result is not None:
+            return search_result.groups()
+    return None
+
 
 def run(args):
     return subprocess.run(args, capture_output=True).stdout.decode('UTF-8')
@@ -129,3 +187,7 @@ def run(args):
 
 def get_repo_file_path():
     return "%s/%s/%s" % (str(Path.home()), GUT_DIRECTORY, REPO_FILE)
+
+
+def get_current_branch():
+    return run("git rev-parse --abbrev-ref HEAD".split(' ')).strip()
