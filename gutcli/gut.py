@@ -42,13 +42,12 @@ def main():
 
     # Setup argument parser
     parser = argparse.ArgumentParser()
+    parser.add_argument("-a", "--aliases", nargs='*', help="Show all aliases.")
     parser.add_argument("-c", "--configure", nargs='*', help="Instantiates this the current directory as a gut repo.")
     parser.add_argument("-r", "--repo", nargs='*', help="Opens the github repository associated with this repository, "
                                                         "or file if specified.")
-    parser.add_argument("-a", "--aliases", nargs='*', help="Show all aliases.")
-
     args = parser.parse_args()
-    # print("args: " + str(args))
+    print("args: " + str(args))
     if args.configure is not None:
         config()
     elif args.repo is not None:

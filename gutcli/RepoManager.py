@@ -41,7 +41,7 @@ class RepoManager:
         print("GitHub Repo [%s]: auto" % repo)
 
         repo_entry = ["[%s]\n" % path, "alias = %s\n" % alias, "user = %s\n" % user, "repo = %s\n" % repo]
-        RepoManager.append_repo_lines(repo_entry)
+        append_repo_lines(repo_entry)
 
     @staticmethod
     def extract_repo_properties(repo_path):
@@ -65,52 +65,9 @@ class RepoManager:
                         maintained_lines.append(line)
             file.close()
 
-        RepoManager.write_repo_lines(maintained_lines)
+        write_repo_lines(maintained_lines)
 
         return properties
-
-    @staticmethod
-    def read_properties(repo_path):
-        properties = {}
-        with open(get_repo_file_path(), 'r') as file:
-            path_found = False
-            for line in file.readlines():
-                if path_found:
-                    if re.match(BRACKET_PATTERN, line) is not None:
-                        path_found = False
-                    else:
-                        key_val = line.strip().split(" = ")
-                        properties[key_val[0]] = None if key_val[1] == "None" else key_val[1]
-
-                else:
-                    if "[%s]" % repo_path in line:
-                        path_found = True
-                        properties["path"] = line.strip("\n[]")
-            file.close()
-        return properties
-
-    @staticmethod
-    def write_repo_lines(lines):
-        with open(get_repo_file_path(), 'w') as file:
-            for line in lines:
-                file.write(line)
-            file.close()
-
-    @staticmethod
-    def read_repo_lines():
-        return open(get_repo_file_path(), 'r').readlines()
-
-    @staticmethod
-    def append_repo_lines(new_lines):
-        maintained_lines = new_lines
-        with open(get_repo_file_path(), 'r') as file:
-            maintained_lines.extend(file.readlines())
-            file.close()
-
-        with open(get_repo_file_path(), 'w') as file:
-            for line in maintained_lines:
-                file.write(line)
-            file.close()
 
     @staticmethod
     def ensure_file_exists():
@@ -123,7 +80,7 @@ class RepoManager:
         path = run(["pwd"]).strip()
         repo_path = find_parent_repo_path(path)
         if repo_path is not None:
-            repo_properties = RepoManager.read_properties(repo_path)
+            repo_properties = read_properties(repo_path)
             url = construct_base_url(path, repo_properties)
             if url:
                 print("Opening '%s'..." % url)
@@ -137,16 +94,13 @@ class RepoManager:
 
 
 def find_parent_repo_path(path):
-    for line in RepoManager.read_repo_lines():
+    for line in read_repo_lines():
         stripped_line = line.strip()
         if re.match(BRACKET_PATTERN, stripped_line) is not None:
             repo_path = stripped_line.strip("[]")
             if repo_path in path:
                 return repo_path
     return None
-
-
-
 
 
 def construct_base_url(path, repo_properties):
@@ -191,3 +145,47 @@ def get_repo_file_path():
 
 def get_current_branch():
     return run("git rev-parse --abbrev-ref HEAD".split(' ')).strip()
+
+
+def append_repo_lines(new_lines):
+    maintained_lines = new_lines
+    with open(get_repo_file_path(), 'r') as file:
+        maintained_lines.extend(file.readlines())
+        file.close()
+
+    with open(get_repo_file_path(), 'w') as file:
+        for line in maintained_lines:
+            file.write(line)
+        file.close()
+
+
+def read_properties(repo_path):
+    properties = {}
+    with open(get_repo_file_path(), 'r') as file:
+        path_found = False
+        for line in file.readlines():
+            if path_found:
+                if re.match(BRACKET_PATTERN, line) is not None:
+                    path_found = False
+                else:
+                    key_val = line.strip().split(" = ")
+                    properties[key_val[0]] = None if key_val[1] == "None" else key_val[1]
+
+            else:
+                if "[%s]" % repo_path in line:
+                    path_found = True
+                    properties["path"] = line.strip("\n[]")
+        file.close()
+    return properties
+
+
+def write_repo_lines(lines):
+    with open(get_repo_file_path(), 'w') as file:
+        for line in lines:
+            file.write(line)
+        file.close()
+
+
+def read_repo_lines():
+    return open(get_repo_file_path(), 'r').readlines()
+
