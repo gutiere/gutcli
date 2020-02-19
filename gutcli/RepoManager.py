@@ -13,8 +13,7 @@ BRACKET_PATTERN = "\[.*?\]"
 class RepoManager:
 
     @staticmethod
-    def config_current_dir():
-        path = run(["pwd"]).strip()
+    def config_dir(path, auto):
         user = None
         repo = None
         config_path = Path("./.git/config")
@@ -26,7 +25,14 @@ class RepoManager:
         repo_properties = RepoManager.extract_repo_properties(path)
         original_alias = repo_properties["alias"] if "alias" in repo_properties.keys() else None
 
-        alias = str(input("Repo Alias [%s]: " % original_alias))
+        alias = None
+        if auto:
+            print("Auto configuring git repo: %s" % path)
+        else:
+            print("Path [%s]: auto" % path)
+            alias = str(input("Repo Alias [%s]: " % original_alias))
+            print("GitHub User [%s]: auto" % user)
+            print("GitHub Repo [%s]: auto" % repo)
         if alias:
             if not alias == original_alias:
                 if original_alias is not None:
@@ -36,11 +42,6 @@ class RepoManager:
                 AliasManager.add_alias(alias_entry)
         else:
             alias = original_alias
-
-        print("Path [%s]: auto" % path)
-        print("GitHub User [%s]: auto" % user)
-        print("GitHub Repo [%s]: auto" % repo)
-
         repo_entry = ["[%s]\n" % path, "alias = %s\n" % alias, "user = %s\n" % user, "repo = %s\n" % repo]
         append_repo_lines(repo_entry)
 
