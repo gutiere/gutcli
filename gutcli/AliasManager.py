@@ -38,15 +38,6 @@ class AliasManager:
         file.close()
         return aliases
 
-    @staticmethod
-    def ensure_file_exists():
-        alias_file_path = Path(get_alias_file_path())
-        if not alias_file_path.is_file():
-            alias_file_path.touch()
-            with open(alias_file_path, "a+") as file:
-                file.write('alias guts="source ~/.gut/aliases"\n')
-            file.close()
-
 
 def get_alias_file_path():
     return "%s/.gut/aliases" % str(Path.home())

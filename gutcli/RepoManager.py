@@ -1,7 +1,7 @@
 import subprocess
 from pathlib import Path
 import re
-
+from gutcli import constants
 from gutcli.AliasManager import AliasManager
 
 GH_HTTP_PATTERN = 'https://github.com/(.*)/(.*)'
@@ -74,12 +74,6 @@ class RepoManager:
         write_repo_lines(maintained_lines)
 
         return properties
-
-    @staticmethod
-    def ensure_file_exists():
-        repo_file_path = Path("%s/.gut/repos" % str(Path.home()))
-        if not repo_file_path.is_file():
-            repo_file_path.touch()
 
     @staticmethod
     def open_repo(args, url_only):
@@ -157,7 +151,7 @@ def run(args):
 
 
 def get_repo_file_path():
-    return "%s/.gut/repos" % str(Path.home())
+    return constants.REPOS_FILE_PATH % str(Path.home())
 
 
 def get_current_branch():

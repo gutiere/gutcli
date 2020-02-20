@@ -4,8 +4,6 @@ from pathlib import Path
 from gutcli.RepoManager import RepoManager
 from gutcli.AliasManager import AliasManager
 
-GUT_DIRECTORY = ".gut"
-
 
 def repo(args, url_only):
     RepoManager.open_repo(args, url_only)
@@ -54,17 +52,7 @@ def aliases():
 
 
 def main():
-    # Create metadata ~/.gut directory if it doesn't exist
-    home_path = str(Path.home())
 
-    # Ensure .gut directory exists
-    dir_path = Path("%s/%s" % (home_path, GUT_DIRECTORY))
-    if not dir_path.is_dir():
-        dir_path.mkdir()
-
-    # Ensure metadata files exist
-    RepoManager.ensure_file_exists()
-    AliasManager.ensure_file_exists()
 
     # Setup argument parser
     parser = argparse.ArgumentParser()
