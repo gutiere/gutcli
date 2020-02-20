@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="gutcli",
-    version="0.0.27",
+    version="0.0.28",
     author="Edgardo Gutierrez Jr",
     author_email="edgardogutierrezjr@gmail.com",
     description="Quick project navigator",

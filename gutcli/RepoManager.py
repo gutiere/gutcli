@@ -97,7 +97,6 @@ class RepoManager:
             repo_properties = read_properties(repo_path)
             url = construct_base_url(path, repo_properties)
             if url:
-
                 if url_only:
                     print("GitHub URL: '%s'" % url)
                 else:
@@ -122,7 +121,7 @@ def find_parent_repo_path(path):
 
 
 def construct_base_url(path, repo_properties):
-    keys = ["user", "repo"]
+    keys = ["origin_user", "origin_repo"]
     for key in keys:
         if key is None or key not in repo_properties.keys():
             return None

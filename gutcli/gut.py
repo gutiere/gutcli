@@ -47,7 +47,6 @@ def auto_configure():
             current_level_size = 0
 
 
-
 def aliases():
     print("GutRepo Aliases:")
     for alias in AliasManager.get_alias_keys():
@@ -72,7 +71,7 @@ def main():
     parser.add_argument("-a", "--aliases", nargs='*', help="Show all aliases.")
     parser.add_argument("-c", "--configure", nargs='*', help="Instantiates this the current directory as a gut repo.")
     parser.add_argument("-r", "--repo", nargs='*', help="Opens the github repository associated with this repository, "
-                                                       "or file if specified.")
+                                                        "or file if specified.")
     parser.add_argument("--url", nargs='*', help="Print URL only, without opening in the browser.")
     parser.add_argument("--auto-configure", nargs='*')
 
