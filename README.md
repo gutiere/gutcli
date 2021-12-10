@@ -17,6 +17,7 @@ The primary benefits of using `gutcli` are:
 | GutRepo Configuration | `$ gut -c` | Configure the current directory as a GutRepo. This **must** be a Github repo directory.|
 | Auto Configuration | `$ gut --auto-configure` | This command will discovery Github repos within the current directory up to 5 layers deep and configure a GutRepo. |
 
+![gutcli-demo](https://user-images.githubusercontent.com/12358737/145651930-301e95ff-e9f7-4756-913d-f2e501f41fab.gif)
 
 ## Installation
 ### Install
