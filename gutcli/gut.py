@@ -1,6 +1,6 @@
 import argparse
 import subprocess
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from gutcli.RepoManager import RepoManager
 from gutcli.AliasManager import AliasManager
 
@@ -15,12 +15,12 @@ def run(args):
 
 # Configure the current repo as a gut repo.
 def config():
-    RepoManager.config_dir(Path.cwd(), False)
+    RepoManager.config_dir(PurePosixPath(Path.cwd()), False)
 
 
 def auto_configure():
     level_cap = 5
-    queue = [Path.cwd()]
+    queue = [PurePosixPath(Path.cwd())]
     level = 0
     level_capacity = 1
     current_level_size = 0
